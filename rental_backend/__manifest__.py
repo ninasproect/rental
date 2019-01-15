@@ -10,14 +10,16 @@
         Long description of module's purpose
     """,
 
-    'author': "My Company",
-    'website': "http://www.yourcompany.com",
+    'author': "SLIMANI FARID",
+    'website': "",
 
     # Categories can be used to filter modules in modules listing
     # Check https://github.com/odoo/odoo/blob/12.0/odoo/addons/base/data/ir_module_category_data.xml
     # for the full list
-    'category': 'Uncategorized',
+    'category': 'sale',
     'version': '0.1',
+	"price": 10000.00,
+    "currency": "EUR",
 
     # any module necessary for this one to work correctly
     'depends': ['base','sale','product','sale_management','sales_team','account'],

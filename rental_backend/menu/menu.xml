@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+   <menuitem id="rental_menu_root" name="Locations"  web_icon="sale,static/description/icon.png" sequence="7"/>
+
+        <menuitem id="rental_order_menu" name="Commandes" parent="rental_menu_root" sequence="2"/>
+
+            <menuitem id="rental_reservation" name="Réservations" parent="rental_order_menu" action="reservation_action" sequence="1"/>
+            <menuitem id="rental_rentaml" name="Locations" parent="rental_order_menu" action="rental_action" sequence="2"/>
+
+
+
+</odoo>

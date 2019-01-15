@@ -1,0 +1,27 @@
+<odoo>
+    <data>
+        <record id="roduct_temlate_form" model="ir.ui.view">
+            <field name="name">rental.product.template.</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="product.product_template_form_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//div[@name='options']" position="inside">
+                     <div>
+                        <field name="rental_ok"/>
+                        <label for="rental_ok"/>
+                    </div>
+                </xpath>
+                <xpath expr="//notebook" position="inside">
+                     <page string="Location" attrs="{'invisible': [('rental_ok', '=', False)]}">
+                         <group col="2" class="col-6">
+                             <field name="rental_price" attrs="{'required': [('rental_ok', '=', True)]}" />
+                             <field name="rental_unit" attrs="{'required': [('rental_ok', '=', True)]}"/>
+                         </group>
+
+                     </page>
+                </xpath>
+
+            </field>
+        </record>
+    </data>
+</odoo>

@@ -1,0 +1,26 @@
+<odoo>
+    <data>
+        <record id="invoice_form_inherit" model="ir.ui.view">
+            <field name="name">invoice.form</field>
+            <field name="model">account.invoice</field>
+            <field name="priority" eval="20"/>
+            <field name="inherit_id" ref="account.invoice_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='payment_term_id']" position="before">
+                    <field name="invoice_type"/>
+                    <field name="start_date" attrs="{'invisible': [('invoice_type', '=', 'sale')],'required': [('invoice_type', '!=', 'sale')]}"/>
+                    <field  name="end_date" attrs="{'invisible': [('invoice_type', '=', 'sale')],'required': [('invoice_type', '!=', 'sale')]}"/>
+                </xpath>
+
+                <xpath expr="//field[@name='invoice_line_ids']/tree/field[@name='price_unit']" position="after">
+                    <field name="sale_rental_price_unit"/>
+                    <field name="price_unit_period" attrs="{'column_invisible': [('parent.invoice_type', '=', 'sale')]}"/>
+                </xpath>
+
+                <xpath expr="//field[@name='invoice_line_ids']/tree/field[@name='price_unit']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

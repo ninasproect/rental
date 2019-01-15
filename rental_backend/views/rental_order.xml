@@ -1,0 +1,135 @@
+<odoo>
+  <data>
+  <record id="rental_form" model="ir.ui.view">
+            <field name="name">rental.order.form</field>
+            <field name="model">rental.order</field>
+            <field name="arch" type="xml">
+                <form string="Locations" class="o_sale_order">
+                  <header>
+                    <field name="invoice_state" invisible="1"/>
+                    <button name="action_confirm" string="Confirmer" type="object" attrs="{'invisible': [('state', 'not in', ['draft'])]}"/>
+                    <button name="create_invoice" string="Cree la facture" type="object" attrs="{'invisible': [('invoice_state', 'in', ['invoiced'])]}"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,sent,rent,cancel"/>
+                  </header>
+                  <sheet>
+
+                    <div class="oe_button_box" name="button_box">
+                        <field name="picking_ids" invisible="1"/>
+                        <button type="object" name="action_view_delivery" class="oe_stat_button" icon="fa-truck" attrs="{'invisible': [('delivery_count', '=', 0)]}">
+                            <field name="delivery_count" widget="statinfo" string="Livraison"/>
+                        </button>
+                        <button name="action_view_invoice" type="object" class="oe_stat_button" icon="fa-pencil-square-o" attrs="{'invisible': [('invoice_count', '=', 0)]}">
+                            <field name="invoice_count" widget="statinfo" string="Factures"/>
+                        </button>
+
+                    </div>
+
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" readonly="1"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="partner_id" widget="res_partner_many2one" domain="[('customer','=',True)]" context="{'search_default_customer':1, 'show_address': 1, 'show_vat': True}" options='{"always_reload": True}'/>
+                            <field name="start_date" options="{'datepicker': {'language': 'fr'}}"/>
+                            <field name="end_date" options="{'datepicker': {'language': 'fr'}}"/>
+                        </group>
+                        <group>
+                            <!--<field name="validity_date" attrs="{'invisible': [('state', 'in', ['sale', 'done'])]}"/>-->
+                            <field name="confirmation_date" attrs="{'invisible': [('state', 'in', ['draft', 'sent', 'cancel'])]}"/>
+                            <field name="currency_id" invisible="1"/>
+                            <field name="company_id" invisible="1"/>
+                            <field name="pricelist_id"/>
+                        </group>
+                    </group>
+                      <field name="rental_line">
+                          <tree editable="bottom">
+                                <field name="sequence" widget="handle"/>
+                                <field name="product_id"/>
+                                <field name="name" widget="section_and_note_text"/>
+                                <field name="product_uom"/>
+                                <field name="product_uom_qty" />
+                                <field name="price_unit"/>
+                                <field name="price_unit_period"/>
+                                <field name="tax_ids" widget="many2many_tags" options="{'no_create': True}" domain="[('type_tax_use','=','sale'),('company_id','=',parent.company_id)]"/>
+                                <field name="discount" groups="sale.group_discount_per_so_line"/>
+                                <field name="price_subtotal" widget="monetary"/>
+                                <field name="state" invisible="1"/>
+                                <field name="currency_id" invisible="1"/>
+                          </tree>
+                      </field>
+                       <group class="oe_subtotal_footer oe_right" colspan="2" name="rental_total">
+                                <field name="amount_untaxed" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                                <field name="amount_tax" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                                <div class="oe_subtotal_footer_separator oe_inline o_td_label">
+                                    <label for="amount_total"/>
+                                    <button name="button_dummy" type="object" states="draft" string="(update)" class="oe_edit_only oe_link"/>
+                                </div>
+                                <field name="amount_total" nolabel="1" class="oe_subtotal_footer_separator" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                       </group>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" widget="mail_followers"/>
+                    <field name="activity_ids" widget="mail_activity"/>
+                    <field name="message_ids" widget="mail_thread"/>
+                </div>
+                </form>
+            </field>
+    </record>
+
+    <record id="rental_pivot" model="ir.ui.view">
+            <field name="name">rental.order.pivot</field>
+            <field name="model">rental.order</field>
+            <field name="arch" type="xml">
+                <pivot string="Sales Orders">
+                    <field name="date_order" type="row"/>
+                    <field name="amount_total" type="measure"/>
+                </pivot>
+            </field>
+    </record>
+
+    <record id="rental_graph" model="ir.ui.view">
+            <field name="name">rental.order.graph</field>
+            <field name="model">rental.order</field>
+            <field name="arch" type="xml">
+               <graph string="Sales Orders">
+                    <field name="partner_id"/>
+                    <field name="amount_total" type="measure"/>
+                </graph>
+            </field>
+    </record>
+
+
+   <record id="rental_tree" model="ir.ui.view">
+            <field name="name">rental.order.tree</field>
+            <field name="model">rental.order</field>
+            <field name="arch" type="xml">
+            <tree string="Réservation">
+                <field name="partner_id"/>
+                <field name="state"/>
+            </tree>
+        </field>
+    </record>
+    <record id="reservation_action" model="ir.actions.act_window">
+      <field name="name">Réservation</field>
+      <field name="type">ir.actions.act_window</field>
+      <field name="res_model">rental.order</field>
+      <field name="view_type">form</field>
+      <field name="view_mode">tree,form</field>
+      <field name="domain">[('state', 'in', ('draft', 'sent', 'cancel'))]</field>
+    </record>
+    <record id="rental_action" model="ir.actions.act_window">
+      <field name="name">Location</field>
+      <field name="type">ir.actions.act_window</field>
+      <field name="res_model">rental.order</field>
+      <field name="view_type">form</field>
+      <field name="view_mode">tree,form</field>
+      <field name="domain">[('state', 'not in', ('draft', 'sent', 'cancel'))]</field>
+  </record>
+
+
+
+
+  </data>
+</odoo>
